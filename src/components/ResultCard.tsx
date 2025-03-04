@@ -36,9 +36,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
     canvas.height = 630;
 
     // Draw background
-    ctx.fillStyle = '#F5EEDC';
+    ctx.fillStyle = `${result.color}20`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
 
     // Draw border
     ctx.strokeStyle = result.color;
@@ -57,7 +56,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
 
     // Draw description
     ctx.font = '30px Arial';
-    ctx.fillStyle = '#333';
+    ctx.fillStyle = '#333'; // Increased opacity here
 
     // Wrap text for description
     const words = result.description.split(' ');
@@ -111,7 +110,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
           >
             {result.type}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700">{result.description}</p>
+          {/* Increased opacity for description */}
+          <p className="text-xl md:text-2xl text-black">{result.description}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
@@ -150,11 +150,12 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Increased opacity for icons */}
           <button
             onClick={shareResult}
             className="flex items-center justify-center gap-2 bg-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-purple-700 transition-colors"
           >
-            <Share size={20} />
+            <Share size={20} color="#FFFFFF" /> {/* Explicitly set icon color */}
             Share Result
           </button>
 
@@ -162,7 +163,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
             onClick={downloadResult}
             className="flex items-center justify-center gap-2 bg-pink-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-pink-600 transition-colors"
           >
-            <Download size={20} />
+            <Download size={20} color="#FFFFFF" /> {/* Explicitly set icon color */}
             Download Image
           </button>
 
@@ -170,7 +171,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onRestart }) => {
             onClick={onRestart}
             className="flex items-center justify-center gap-2 bg-white text-purple-600 border-2 border-purple-600 py-3 px-6 rounded-lg font-medium hover:bg-purple-50 transition-colors"
           >
-            <RefreshCw size={20} />
+            <RefreshCw size={20} color="#800080" /> {/* Explicitly set icon color */}
             Take Quiz Again
           </button>
         </div>
