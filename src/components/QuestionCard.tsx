@@ -38,7 +38,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               key={option.value + option.text}
               onClick={() => onSelectAnswer(question.id, option.value)}
               className={`w-full p-4 rounded-lg text-left transition-all duration-300 hover:shadow-md ${
-                selectedAnswer === option.value && option.text === option.text
+                selectedAnswer === option.value
                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg transform scale-102'
                   : 'bg-purple-100 hover:bg-purple-200'
               }`}
