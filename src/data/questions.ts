@@ -1,5 +1,5 @@
 import { Question } from '../types';
-
+//Questions IE
 export const questions: Question[] = [
   {
     id: 1,
