@@ -1,6 +1,6 @@
 import { MBTIResult } from '../types';
 
- 
+//Result Rendering Page
 export const mbtiResults: Record<string, MBTIResult> = {
   'ISTJ': {
     type: 'ISTJ',
