@@ -20,7 +20,7 @@ interface ProgressBarProps {
   sectionBreaks?: number[]; // Optional breakpoints for multi-section quizzes
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({
+const ProgressBar = ({
   currentQuestion,
   totalQuestions,
   onJumpToQuestion,
@@ -32,9 +32,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   showSummary = true,
   onComplete,
   sectionBreaks = [],
-}) => {
+}: ProgressBarProps) => {
   // Calculate progress percentage
-  const progress = (currentQuestion / totalQuestions) * 100;
+  const progress = Math.min(((currentQuestion) / totalQuestions) * 100, 100);
   
   // Count answered questions
   const answeredCount = Object.keys(userAnswers).length;
@@ -48,7 +48,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       medium: 'bg-purple-400',
       dark: 'bg-purple-600',
       text: 'text-purple-700',
-      textDark: 'text-purple-600',
+      textDark: 'text-purple-900',
       gradient: 'from-purple-500 to-pink-500',
       hover: 'hover:bg-purple-200',
       ring: 'focus:ring-purple-400',
@@ -58,7 +58,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       medium: 'bg-blue-400',
       dark: 'bg-blue-600',
       text: 'text-blue-700',
-      textDark: 'text-blue-600',
+      textDark: 'text-blue-900',
       gradient: 'from-blue-500 to-indigo-500',
       hover: 'hover:bg-blue-200',
       ring: 'focus:ring-blue-400',
@@ -68,7 +68,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       medium: 'bg-emerald-400',
       dark: 'bg-emerald-600',
       text: 'text-emerald-700',
-      textDark: 'text-emerald-600',
+      textDark: 'text-emerald-900',
       gradient: 'from-emerald-500 to-teal-500',
       hover: 'hover:bg-emerald-200',
       ring: 'focus:ring-emerald-400',
@@ -78,7 +78,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       medium: 'bg-gray-400',
       dark: 'bg-gray-600',
       text: 'text-gray-700',
-      textDark: 'text-gray-600',
+      textDark: 'text-gray-900',
       gradient: 'from-gray-500 to-slate-500',
       hover: 'hover:bg-gray-200',
       ring: 'focus:ring-gray-400',
@@ -140,30 +140,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
     return label;
   };
 
-  // Render question indicator icons based on status
-  const renderQuestionIcon = (status: ReturnType<typeof getQuestionStatus>) => {
-    if (!status.isAnswered) {
-      return <HelpCircle className="w-4 h-4" />;
-    }
-    
-    if (status.isCorrect === undefined) {
-      return <CheckCircle className="w-4 h-4" />;
-    }
-    
-    return status.isCorrect ? 
-      <CheckCircle className="w-4 h-4 text-emerald-500" /> : 
-      <AlertCircle className="w-4 h-4 text-red-500" />;
-  };
-
   return (
-    <div className="w-full mb-8" role="navigation" aria-label="Quiz progress">
+    <div className="w-full mb-8 space-y-4" role="navigation" aria-label="Quiz progress">
       {/* Header with progress stats */}
-      <div className="flex flex-wrap justify-between mb-2 text-sm font-medium">
-        <span className={colors.textDark}>
+      <div className="flex flex-wrap justify-between items-center mb-1 text-sm font-medium">
+        <span className={`${colors.textDark} font-semibold`}>
           Question {currentQuestion} of {totalQuestions}
         </span>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {showSummary && (
             <span className={`${colors.text} font-medium`}>
               {answeredCount} of {totalQuestions} answered
@@ -171,7 +156,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           )}
           
           {showPercentage && (
-            <span className={`${colors.textDark} font-bold`}>
+            <span className={`${colors.textDark} font-bold px-2 py-1 rounded-full bg-opacity-10 ${colors.light}`}>
               {Math.round(progress)}% Complete
             </span>
           )}
@@ -180,7 +165,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       
       {/* Progress bar */}
       <div 
-        className={`h-3 ${colors.light} rounded-full overflow-hidden mb-4`}
+        className={`h-3 ${colors.light} rounded-full overflow-hidden mb-4 shadow-inner`}
         role="progressbar" 
         aria-valuenow={Math.round(progress)} 
         aria-valuemin={0} 
@@ -194,17 +179,17 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       
       {/* Section breaks indicator */}
       {sectionBreaks.length > 0 && (
-        <div className="relative h-1 mb-6">
+        <div className="relative h-6 mb-6">
           {sectionBreaks.map((breakPoint, idx) => {
             const position = (breakPoint / totalQuestions) * 100;
             return (
               <div 
-                key={idx} 
-                className={`absolute h-4 w-px ${colors.dark} bottom-1`} 
+                key={idx}
+                className={`absolute h-6 w-px ${colors.dark} bottom-1`}
                 style={{ left: `${position}%` }}
                 aria-hidden="true"
               >
-                <div className={`absolute -top-6 -translate-x-1/2 text-xs ${colors.textDark}`}>
+                <div className={`absolute -top-6 -translate-x-1/2 text-xs font-medium ${colors.textDark} whitespace-nowrap`}>
                   Section {idx + 1}
                 </div>
               </div>
@@ -219,24 +204,35 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           const questionId = index + 1;
           const status = getQuestionStatus(questionId);
           
+          let buttonClasses = "w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 shadow-sm";
+          
+          if (status.isCurrent) {
+            buttonClasses += ` bg-gradient-to-r ${colors.gradient} text-white scale-110 shadow-md`;
+          } else if (status.isAnswered) {
+            if (status.isCorrect === true) {
+              buttonClasses += " bg-emerald-500 text-white";
+            } else if (status.isCorrect === false) {
+              buttonClasses += " bg-red-500 text-white";
+            } else {
+              buttonClasses += ` ${colors.medium} text-white`;
+            }
+          } else {
+            buttonClasses += ` ${colors.light} ${colors.text} ${allowNavigation ? colors.hover : ''}`;
+          }
+          
+          if (!allowNavigation && !status.isCurrent) {
+            buttonClasses += " opacity-60 cursor-not-allowed";
+          }
+          
           return (
             <button
               key={index}
-              onClick={() => allowNavigation && onJumpToQuestion(index)}
-              disabled={!allowNavigation}
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300
-                ${status.isCurrent
-                  ? `bg-gradient-to-r ${colors.gradient} text-white scale-110 shadow-md`
-                  : status.isAnswered
-                  ? `${colors.medium} text-white`
-                  : `${colors.light} ${colors.text} ${colors.hover}`
-                }
-                focus:outline-none focus:ring-2 ${colors.ring} ${
-                  !allowNavigation && !status.isCurrent ? 'opacity-60 cursor-not-allowed' : ''
-                }`}
+              onClick={() => allowNavigation && onJumpToQuestion(questionId)}
+              disabled={!allowNavigation && !status.isCurrent}
+              className={buttonClasses}
               aria-label={getAriaLabel(questionId, status)}
               aria-current={status.isCurrent ? 'step' : undefined}
-              tabIndex={allowNavigation ? 0 : -1}
+              tabIndex={allowNavigation || status.isCurrent ? 0 : -1}
             >
               {questionId}
             </button>
@@ -246,7 +242,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 
       {/* Completion toast message */}
       {showCompletionToast && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 flex items-center gap-3 animate-fade-in max-w-xs">
+        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 flex items-center gap-3 max-w-xs z-50 border border-gray-100">
           <div className={`${colors.dark} p-2 rounded-full`}>
             <CheckCircle className="w-5 h-5 text-white" />
           </div>
